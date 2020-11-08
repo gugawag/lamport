@@ -1,14 +1,22 @@
+from threading import Thread
+from random import randint
+import time
+
+
+# Algoritmo: todo processo Pi mantem seu próprio relógio local (Ci). O contador incremente da seguinte forma
+
+# 1 - Antes de executar qualquer evento: Ci: Ci ← Ci + 1.
+# 2 - Quando um processo Pi envia uma mensagem m para o processo Pj, ele configura a mensagem m para ter o timestamp Ci
+#         calculado no passo anterior
+# 3 - Uma vez que o processo Pj recebeu a mensagem m, Pj ajusta seu relógio para Cj ← max {Cj , ts(m)} + 1, e entrega
+#         a mensagem m para a aplicação
+
 class Mensagem:
 
     def __init__(self, id, num_proc, relogio):
         self.id = id
         self.num_proc = num_proc
         self.relogio = relogio
-
-
-from threading import Thread
-from random import randint
-import time
 
 
 class Processo(Thread):
@@ -37,13 +45,15 @@ class Processo(Thread):
         self.incrementar_relogio()
         self.incrementar_count_msg()
         mensagem = Mensagem(self.count_msg, self.num_proc, self.relogio)
-        print(self.espaco, self.relogio, ' [Enviando] - Proc', self.num_proc, ' enviando msg [', self.count_msg, '] para proc [',
+        print(self.espaco, self.relogio, ' [Enviando] - Proc', self.num_proc, ' enviando msg [', self.count_msg,
+              '] para proc [',
               processo_recebedor.num_proc, ']')
         processo_recebedor.receber_mensagem(mensagem)
 
     def receber_mensagem(self, mensagem):
         self.atualizar_relogio(self.relogio, mensagem.relogio)
-        print(self.espaco, self.relogio, ' [Recebendo] - Proc', self.num_proc, ' recebendo msg [', mensagem.id, '] do proc [',
+        print(self.espaco, self.relogio, ' [Recebendo] - Proc', self.num_proc, ' recebendo msg [', mensagem.id,
+              '] do proc [',
               mensagem.num_proc,
               ']')
 
